@@ -1,0 +1,7 @@
+// ------ useful terminal snippets ------
+
+// #) to get the assembly codes 
+clang main.c engine.c -S
+
+// #) to clear assembly from folder
+find . -name '*.s' -delete

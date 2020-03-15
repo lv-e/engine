@@ -1,6 +1,16 @@
+#include "typedefs.h"
 
-struct Lv {
-    const int version;
+struct UI {
+    LVQuadPixel screenBuffer[SCREEN_PIXELS/4];
+    void (*drawPixel)(LVPoint point, LVColor color);
 };
 
-extern const struct Lv lv;
+struct Lv {
+    Version version;
+    struct UI ui;
+};
+
+extern void (*driver_draw)();
+extern struct Lv lv;
+
+int lvInit();
