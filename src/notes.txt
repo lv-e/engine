@@ -5,3 +5,11 @@ clang main.c engine.c -S
 
 // #) to clear assembly from folder
 find . -name '*.s' -delete
+
+
+// ----- ideias -----
+
+maybe make a CRT compatible NTSC console?
+- LinkIt 7697 (192 MHz, 350kb RAM, 4 MB RAM + wifi/BL)
+- AD725 RGB to NTSC encoder
+- Little eink display QR Code to 
