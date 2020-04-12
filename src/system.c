@@ -23,7 +23,7 @@ void draw(){
     int duoIndex; 
     int bufferIndex = 0;
     
-    for (uint32_t y = 0; y < 1; y++, bufferIndex = 0) {
+    for (uint32_t y = 0; y < DRIVER_SCREEN_HEIGHT; y++, bufferIndex = 0) {
         for (uint32_t x = 0; x < DRIVER_SCREEN_WIDTH; x += 2) {
 
             duoIndex = (y * DRIVER_SCREEN_WIDTH + x) / 2;

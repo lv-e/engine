@@ -1,11 +1,11 @@
 #include <stdint.h>
 
 #if !defined(DRIVER_SCREEN_WIDTH)
-#define DRIVER_SCREEN_WIDTH ((const uint32_t) 110)
+#define DRIVER_SCREEN_WIDTH ((const uint32_t) 220)
 #endif
 
 #if !defined(DRIVER_SCREEN_HEIGHT)
-#define DRIVER_SCREEN_HEIGHT ((const uint32_t) 88)
+#define DRIVER_SCREEN_HEIGHT ((const uint32_t) 176)
 #endif
 
 #define SCREEN_SIZE (const LVSize) {DRIVER_SCREEN_WIDTH, DRIVER_SCREEN_HEIGHT}

@@ -6,6 +6,10 @@ clang main.c engine.c -S
 // #) to clear assembly from folder
 find . -name '*.s' -delete
 
+// #) to build sandbox using clang only
+clang sandbox.c system.c engine.c -Os -o sandbox
+
+
 
 // ----- ideias -----
 
