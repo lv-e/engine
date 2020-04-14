@@ -24,8 +24,9 @@ publish(){
                 read commit_message; echo "--"
 
                 git add .
+                git commit -a -m '$commit_message'
                 VERSION=`git describe --tags --abbrev=0 | awk -F. '{$NF+=1; OFS="."; print $0}'`
-                git tag -a $VERSION -m '$commit_message'
+                git tag -a $VERSION
                 git push origin $VERSION
 
                 echo "there you go!"
