@@ -20,13 +20,16 @@ publish(){
         case $yn in
             [Yy]* ) 
 
-                echo "publishing a new tag. what's the commit message?"
+                echo "publishing a new tag (with path bump). what's the commit message?"
                 read commit_message; echo "--"
 
                 git add .
-                git commit --allow-empty -m '$commit_message'
+                VERSION=`git describe --tags --abbrev=0 | awk -F. '{$NF+=1; OFS="."; print $0}'`
+                git tag -a $VERSION -m '$commit_message'
+                git push origin $VERSION
+
                 echo "there you go!"
-                
+
                 break;;
             [Nn]* )
                 echo "ok! bye."
@@ -39,7 +42,11 @@ publish(){
 }
 
 runSandbox(){
-    echo "TODO! :c (add a makefile for sandbox"
+    echo "Running make..."
+    make -f sandbox/Makefile
+    make -f sandbox/Makefile clean
+    echo "Done! now will run game:"
+    ./sandbox/game
 }
 
 ## what should we do?

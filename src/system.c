@@ -1,5 +1,4 @@
 #include "engine.h"
-#include <stdio.h>
 
 void draw();
 void update();
@@ -36,5 +35,3 @@ void draw(){
         driver_draw_hline(y, (uint32_t*) &output, DRIVER_SCREEN_WIDTH);
     }
 }
-
-

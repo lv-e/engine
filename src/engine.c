@@ -1,5 +1,7 @@
 #include "engine.h"
+#ifdef LV_USE_STDIO
 #include <stdio.h>
+#endif
 
 struct Lv lv;
 void ui_drawPixel(LVPoint point, LVColor color);
@@ -11,8 +13,10 @@ int lvInit(){
 
     lv.ui.drawPixel = &ui_drawPixel;
     
+#ifdef LV_USE_STDIO
     printf("lv engine version %d.%d.%d\n", lv.version.major, lv.version.minor, lv.version.path);
     printf("frame buffer size is %.1fkb\n", sizeof(lv.ui.screenBuffer) / 2.0 / 1024.0);
+#endif
 
     return 0;
 }

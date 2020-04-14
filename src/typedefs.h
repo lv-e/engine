@@ -1,4 +1,11 @@
-#include <stdint.h>
+
+// 8/16/32bits Integers definitions
+typedef signed char int8_t;
+typedef short int   int16_t;
+typedef int         int32_t;
+typedef unsigned char       uint8_t;
+typedef unsigned short int  uint16_t;
+typedef unsigned int        uint32_t;
 
 #if !defined(DRIVER_SCREEN_WIDTH)
 #define DRIVER_SCREEN_WIDTH ((const uint32_t) 220)
@@ -41,9 +48,9 @@ typedef struct {
     uint8_t r:5;
     uint8_t g:6;
     uint8_t b:5;
-} RGBScaledColor;
+} LVRGBColor;
 
-#define makeColorFromRGB(R, G, B) (RGBScaledColor) {R >> 3, G >> 2, B >> 3}
+#define makeColorFromRGB(R, G, B) (LVRGBColor) {R >> 3, G >> 2, B >> 3}
 #define RGB32FromColor(C) ((uint32_t) (C.r << 19 | C.g << 10 | C.b << 3))
 
 typedef struct {
@@ -51,7 +58,7 @@ typedef struct {
     unsigned char b:4;
 } LVDuoPixel;
 
-static RGBScaledColor palette[16] = {
+static LVRGBColor palette[16] = {
 
     makeColorFromRGB(0,0,0),
     makeColorFromRGB(29,43,83),
