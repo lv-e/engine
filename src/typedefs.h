@@ -1,11 +1,14 @@
 
 // 8/16/32bits Integers definitions
+#if !defined(LV_PRIMITIVES)
+#define LV_PRIMITIVES
 typedef signed char int8_t;
 typedef short int   int16_t;
 typedef int         int32_t;
 typedef unsigned char       uint8_t;
 typedef unsigned short int  uint16_t;
 typedef unsigned int        uint32_t;
+#endif
 
 #if !defined(DRIVER_SCREEN_WIDTH)
 #define DRIVER_SCREEN_WIDTH ((const uint32_t) 220)
@@ -98,7 +101,7 @@ typedef struct {
     uint16_t height;
 } LVSize;
 
-static LVSize makeSize(int16_t width, int16_t height){
+static LVSize makeSize(uint16_t width, uint16_t height){
     return (LVSize) {width, height};
 }
 
