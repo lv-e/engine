@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "typedefs.h"
+#include "lv-engine/typedefs.h"
 
 struct Lv {
     Version version;

@@ -1,4 +1,4 @@
-#include "../src/engine.h"
+#include "lv-engine/engine.h"
 #include <stdio.h>
 
 // this is just a sandbox

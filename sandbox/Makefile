@@ -1,13 +1,17 @@
 csrc = $(wildcard *.c) \
        $(wildcard sandbox/*.c) \
-       $(wildcard src/*.c)
+       $(wildcard lv-engine/*.c)
 
-obj = $(csrc:.c=.o)
+obj 		= $(csrc:.c=.o)
+flags 		= -DLV_USE_STDIO=1
+includes 	= -I./
 
-COMPILER = gcc
+CFLAGS 	 	= $(flags) $(includes)
+CC 			= gcc
+LINKER 		= g++
 
 game: $(obj)
-	$(COMPILER) -o sandbox/$@ $^ -I.
+	$(LINKER) -o sandbox/$@ $^ -I.
 
 .PHONY:
 	clean
