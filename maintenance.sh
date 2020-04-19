@@ -28,6 +28,7 @@ publish(){
                 VERSION=`git describe --tags --abbrev=0 | awk -F. '{$NF+=1; OFS="."; print $0}'`
                 git tag -a $VERSION -m "tagging as $VERSION"
                 git push origin $VERSION
+                git push origin master
 
                 echo "there you go!"
 

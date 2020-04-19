@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // 8/16/32bits Integers definitions
 #if !defined(LV_PRIMITIVES)
@@ -118,3 +121,7 @@ typedef struct {
 } System;
 
 System makeSystem();
+
+#ifdef __cplusplus
+}
+#endif
