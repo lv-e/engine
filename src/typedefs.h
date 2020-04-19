@@ -95,7 +95,7 @@ typedef struct {
     int16_t y;
 } LVPoint; 
 
-static LVPoint makePoint(uint16_t x, uint16_t y){
+static LVPoint makePoint(int16_t x, int16_t y){
     return (LVPoint) {x, y};
 }
 
