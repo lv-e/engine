@@ -18,7 +18,7 @@ struct Lv {
     UI ui;
 };
 
-struct Lv lv;
+extern struct Lv lv;
 
 /* lvInit
    will should be automaticaly be called by 

@@ -10,6 +10,14 @@ void drawPixel(LVPoint point, LVColor color){
 UI makeUI(){
     UI ui;
     ui.drawPixel = &drawPixel;
+    
+    LVDuoPixel blank;
+    blank.a = 0;
+    blank.b = 0;
+
+    for(uint32_t i =0; i < SCREEN_BUFFER_SIZE; i++)
+        ui.screenBuffer[i] = blank;
+        
     return ui;
 }
 
