@@ -1,10 +1,16 @@
 #pragma once
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "lv-engine/driver-protocol.h"
+
 #include "lv-engine/typedefs.h"
+#include "lv-engine/components/color.h"
+#include "lv-engine/components/geometry.h"
+#include "lv-engine/components/system.h"
+#include "lv-engine/components/ui.h"
+#include "lv-engine/components/version.h"
 
 struct Lv {
     Version version;
@@ -12,11 +18,12 @@ struct Lv {
     UI ui;
 };
 
-extern struct Lv lv;
-int lvInit();
+struct Lv lv;
 
-// driver related
-extern void driver_draw_hline(uint32_t line, uint32_t* buffer, uint32_t size);
+/* lvInit
+   will should be automaticaly be called by 
+   main program, on editor's template */
+void lvInit();
 
 #ifdef __cplusplus
 }

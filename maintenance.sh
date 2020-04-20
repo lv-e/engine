@@ -51,6 +51,12 @@ runSandbox(){
     ./sandbox/game
 }
 
+clearArtifacts(){
+    echo "Cleaning..."
+    make -f sandbox/Makefile clean
+}
+
+
 ## what should we do?
 
  while true; do
@@ -58,12 +64,14 @@ runSandbox(){
         echo "available options are:"
         echo " 1) publish a new version"
         echo " 2) run the sandbox app"
+        echo " 3) clear build artifacts"
 
         read -p "choose one: " opt; echo "--"
 
         case $opt in
             1 ) publish; break;;
             2 ) runSandbox; break;;
+            3 ) clearArtifacts; break;;
             * ) echo "ok! bye."; exit;;
         esac
 done

@@ -1,17 +1,8 @@
+#include "lv-engine/components/system.h"
 #include "lv-engine/engine.h"
 
-void draw();
-void update();
-
-System makeSystem(){
-    System system;
-    system.draw = &draw;
-    system.update = &update;
-    return system;
-}
-
 void update(){
-
+    driver_GamePadState(0);
 }
 
 void draw(){
@@ -32,6 +23,13 @@ void draw(){
             output[bufferIndex++] = RGB32FromColor(palette[duo.b]);
         }
         
-        driver_draw_hline(y, (uint32_t*) &output, DRIVER_SCREEN_WIDTH);
+        driver_DrawHLine(y, (uint32_t*) &output, DRIVER_SCREEN_WIDTH);
     }
+}
+
+System makeSystem(){
+    System system;
+    system.draw = &draw;
+    system.update = &update;
+    return system;
 }
