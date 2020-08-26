@@ -1,30 +1,18 @@
+
 #pragma once
-#ifdef __cplusplus
+
+#include "lvk.h"
+#include "lvtypes.h"
+#include "ui/director.h"
+#include "ui/scene.h"
+#include "ui/display.h"
+#include "ui/colors.h"
+
+// ----- driver promises:
 extern "C" {
-#endif
-
-#include "lv-engine/driver-protocol.h"
-
-#include "lv-engine/typedefs.h"
-#include "lv-engine/components/color.h"
-#include "lv-engine/components/geometry.h"
-#include "lv-engine/components/system.h"
-#include "lv-engine/components/ui.h"
-#include "lv-engine/components/version.h"
-
-struct Lv {
-    Version version;
-    System system;
-    UI ui;
-};
-
-extern struct Lv lv;
-
-/* lvInit
-   will should be automaticaly be called by 
-   main program, on editor's template */
-void lvInit();
-
-#ifdef __cplusplus
+    /* 
+        will be called every horizontal line of frame buffer on draw
+        size of stream = lvk_octaspixels_per_line
+    */
+    extern void lvDriver_DrawHLine(lv::half line, lv::OctaPixel* stream);
 }
-#endif
