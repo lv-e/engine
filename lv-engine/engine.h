@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include "lvk.h"
-#include "lvtypes.h"
-#include "ui/director.h"
-#include "ui/scene.h"
-#include "ui/display.h"
-#include "ui/colors.h"
+#include "lv-game/lvk.h"
+#include "lv-engine/lvtypes.h"
+#include "lv-engine/ui/director.h"
+#include "lv-engine/ui/scene.h"
+#include "lv-engine/ui/display.h"
+#include "lv-engine/ui/colors.h"
 
 // ----- driver promises:
 extern "C" {

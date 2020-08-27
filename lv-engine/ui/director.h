@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../lvk.h"
-#include "../lvtypes.h"
-#include "scene.h"
+#include "lv-game/lvk.h"
+#include "lv-engine/lvtypes.h"
+#include "lv-engine/ui/scene.h"
 
 #define lvDirector lv::Director::shared()
 #define NO_SCENE 254

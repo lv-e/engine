@@ -1,6 +1,6 @@
 
 #pragma once
-#include "lvk.h"
+#include "lv-game/lvk.h"
 
 namespace lv {
 

@@ -1,7 +1,7 @@
 #pragma once 
 
-#include "lvtypes.h"
-#include "lvk.h"
+#include "lv-engine/lvtypes.h"
+#include "lv-game/lvk.h"
 
 namespace lv {
     

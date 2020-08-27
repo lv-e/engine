@@ -1,7 +1,6 @@
-#include "director.h"
-#include "display.h"
-#include "scene.h"
-#include <math.h>
+#include "lv-engine/ui/director.h"
+#include "lv-engine/ui/display.h"
+#include "lv-engine/ui/scene.h"
 
 using namespace lv;
 

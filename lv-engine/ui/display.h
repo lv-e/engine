@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../lvk.h"
-#include "../lvtypes.h"
-#include "colors.h"
+#include "lv-game/lvk.h"
+#include "lv-engine/lvtypes.h"
+#include "lv-engine/ui/colors.h"
 
 #define lvDisplay lv::Display::shared()
 
