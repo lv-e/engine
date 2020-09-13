@@ -21,8 +21,10 @@ namespace lv {
             void clear();
             void refresh();
             
-            void fillRect(octet color, octet x, octet y, octet w,  octet h);
-            void setPixel(octet color, octet x, octet y);
+            void fillRect(Region region, octet color);
+            void setPixel(Point p, octet color);
+
+            void blit(Region region, OctaPixel *pixels);
 
         private:
             // for 130px at 5bpp -> 650 bits

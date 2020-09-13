@@ -31,6 +31,13 @@ namespace lv {
             return z;
         }
 
+        static OctaPixel withColor(octet c) {
+            static OctaPixel z;
+            z.xa = c; z.xb = c; z.xc = c;
+            z.xd = c; z.xe = c; z.xf = c;
+            z.xg = c; z.xh = c;
+            return z;
+        }
     };
 
     
