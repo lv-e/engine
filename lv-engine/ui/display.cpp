@@ -1,19 +1,28 @@
 #include "lv-engine/ui/display.h"
 #include "lv-engine/engine.h"
+#include <cstring>
 
 using namespace lv;
 
 void Display::clear() {
+#ifdef USE_OCTAPIXELS
     for(half h = 0; h < lvk_display_h; h++) { 
         for(half w = 0; w < lvk_octaspixels_per_line; w++) {
             _framebuffer[h][w] = OctaPixel::zero();
         }
     }
+#else 
+    memset(&_framebuffer, 0, lvk_display_h * lvk_display_w);
+#endif
 }
 
 void Display::refresh() {
     for(half i = 0; i < lvk_display_h; i++) {
+        #ifdef USE_OCTAPIXELS
         lvDriver_DrawHLine(i, (lv::OctaPixel*) &_framebuffer[i]);
+        #else 
+        lvDriver_DrawHLine(i, _framebuffer[i]);
+        #endif
     }
 }
 
@@ -24,7 +33,7 @@ void Display::fillRect(Region region, octet color) {
 }
 
 void Display::setPixel(Point p, octet color) {
-
+#ifdef USE_OCTAPIXELS
     switch(p.x%8) {
         case 0: _framebuffer[p.y%lvk_display_h][p.x/8].xa = color; return;
         case 1: _framebuffer[p.y%lvk_display_h][p.x/8].xb = color; return;
@@ -35,9 +44,14 @@ void Display::setPixel(Point p, octet color) {
         case 6: _framebuffer[p.y%lvk_display_h][p.x/8].xg = color; return;
         case 7: _framebuffer[p.y%lvk_display_h][p.x/8].xh = color; return;
     }
+#else
+    if (p.x > 0 && p.x < lvk_display_w && p.y > 0 && p.y < lvk_display_h)
+        _framebuffer[p.y][p.x] = color;
+#endif
 }
 
-void Display::blit(Region region, OctaPixel *pixels) {
+#ifdef USE_OCTAPIXELS
+void Display::blit(Region region, const OctaPixel *const  pixels) {
     
     if(region.size.w == 0 || region.size.h == 0) return;
     if(pixels == 0) return;
@@ -72,15 +86,17 @@ void Display::blit(Region region, OctaPixel *pixels) {
                 case 7: color = octa.xh; break;
             }
 
-            switch(p.x % 8) {
-                case 0: _framebuffer[p.y % lvk_display_h][p.x/8].xa = color; break;
-                case 1: _framebuffer[p.y % lvk_display_h][p.x/8].xb = color; break;
-                case 2: _framebuffer[p.y % lvk_display_h][p.x/8].xc = color; break;
-                case 3: _framebuffer[p.y % lvk_display_h][p.x/8].xd = color; break;
-                case 4: _framebuffer[p.y % lvk_display_h][p.x/8].xe = color; break;
-                case 5: _framebuffer[p.y % lvk_display_h][p.x/8].xf = color; break;
-                case 6: _framebuffer[p.y % lvk_display_h][p.x/8].xg = color; break;
-                case 7: _framebuffer[p.y % lvk_display_h][p.x/8].xh = color; break;
+            if (color != 0) {
+                switch(p.x % 8) {
+                    case 0: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xa = color; break;
+                    case 1: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xb = color; break;
+                    case 2: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xc = color; break;
+                    case 3: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xd = color; break;
+                    case 4: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xe = color; break;
+                    case 5: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xf = color; break;
+                    case 6: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xg = color; break;
+                    case 7: _framebuffer[p.y % lvk_display_h][(p.x % lvk_display_w)/8].xh = color; break;
+                }
             }
             
             if (++drawn < pixelCount){
@@ -94,3 +110,32 @@ void Display::blit(Region region, OctaPixel *pixels) {
 
     } while( ++cursor < octas);
 }
+#else 
+void Display::blit(Region region, const octet *const pixels) {
+
+    if(region.size.w == 0 || region.size.h == 0) return;
+    if(pixels == 0) return;
+
+    static half pixelCount = region.size.w * region.size.h;
+    static half cursor = 0;
+    static half drawn = 0;
+
+    static Point p = region.origin;
+    static half lineStart  = region.origin.x;
+    static half lineEnd    = region.origin.x + region.size.w;
+    
+    do {
+        
+        if (p.x > 0 && p.x < lvk_display_w && p.y > 0 && p.y < lvk_display_h)
+            _framebuffer[p.y][p.x] = *(pixels + cursor);
+
+        if (++drawn < pixelCount){
+            if (p.x + 1 == lineEnd) {
+                p.x = lineStart;
+                p.y++;
+            } else p.x++;
+        }
+        
+    } while (++cursor < pixelCount);
+}
+#endif

@@ -4,9 +4,10 @@
 #include "lv-game/lvk.h"
 
 namespace lv {
-    
+
+#ifdef USE_OCTAPIXELS    
     /*
-    LVColor
+    OctaPixel
     is a five bits indexed color, 40 bits into 5 bytes pack
     so, 31 + transparency unique colors at runtime
     indexed will then be mapped to 16bits//24bits RGB
@@ -39,7 +40,6 @@ namespace lv {
             return z;
         }
     };
-
+#endif
     
 }
-
