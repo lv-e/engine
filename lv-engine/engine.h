@@ -20,5 +20,6 @@ extern "C" {
     extern void lvDriver_DrawHLine(lv::half line, lv::OctaPixel* stream);
     #else 
     extern void lvDriver_DrawHLine(lv::half line, lv::octet (&stream)[lvk_display_w]);
+    extern lv::octet lvDriver_CurrentFPS(void);
     #endif
 }

@@ -18,7 +18,10 @@ void Director::update(){
 }
 
 void Director::draw(){
-    if (isRunning()) lvDisplay.refresh();
+
+    // delegate to display
+    if (isRunning())
+        lvDisplay.refresh();
 }
 
 void Director::runScene(octet sceneID){

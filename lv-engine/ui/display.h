@@ -20,6 +20,7 @@ namespace lv {
 
             void clear();
             void refresh();
+            octet fps();
             
             void fillRect(Region region, octet color);
             void setPixel(Point p, octet color);

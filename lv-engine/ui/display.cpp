@@ -2,6 +2,8 @@
 #include "lv-engine/engine.h"
 #include <cstring>
 
+#define MIN(a,b) ((a)<(b)?(a):(b))
+
 using namespace lv;
 
 void Display::clear() {
@@ -24,6 +26,10 @@ void Display::refresh() {
         lvDriver_DrawHLine(i, _framebuffer[i]);
         #endif
     }
+}
+
+octet Display::fps() {
+    return lvDriver_CurrentFPS();
 }
 
 void Display::fillRect(Region region, octet color) {
@@ -113,29 +119,42 @@ void Display::blit(Region region, const OctaPixel *const  pixels) {
 #else 
 void Display::blit(Region region, const octet *const pixels) {
 
-    if(region.size.w == 0 || region.size.h == 0) return;
+    // must have region and data to draw
+    if(region.size.w < 1 || region.size.h < 1) return;
     if(pixels == 0) return;
 
-    static half pixelCount = region.size.w * region.size.h;
-    static half cursor = 0;
-    static half drawn = 0;
+    const word lineWidth    = region.size.w;
+    const word lines        = region.size.h;
+    const i32 firstLine    = region.origin.y;
+    const i32 linePadding  = region.origin.x;
 
-    static Point p = region.origin;
-    static half lineStart  = region.origin.x;
-    static half lineEnd    = region.origin.x + region.size.w;
-    
-    do {
-        
-        if (p.x > 0 && p.x < lvk_display_w && p.y > 0 && p.y < lvk_display_h)
-            _framebuffer[p.y][p.x] = *(pixels + cursor);
+    // if x axis not even on screen, return
+    if(linePadding > lvk_display_w) return;
+    if(linePadding + lineWidth < 0) return;
 
-        if (++drawn < pixelCount){
-            if (p.x + 1 == lineEnd) {
-                p.x = lineStart;
-                p.y++;
-            } else p.x++;
+    // do one memcpy per line
+    for(word line = 0; line < lines; line++) {
+
+        const word targetLine = firstLine + line;
+
+        // check out of bounds
+        if (targetLine > lvk_display_h) return;
+        if (targetLine < 0) continue;
+
+        if (linePadding >= 0) {
+            memcpy(
+                &_framebuffer[targetLine][linePadding],
+                pixels + line * lineWidth,
+                MIN(lineWidth, lvk_display_w - linePadding)
+            );
+        } else {
+            memcpy(
+                &_framebuffer[targetLine][0],
+                pixels + (line * lineWidth) + (linePadding * -1),
+                MIN(lineWidth, lvk_display_w + linePadding)
+            );
         }
-        
-    } while (++cursor < pixelCount);
+    }
+
 }
 #endif
