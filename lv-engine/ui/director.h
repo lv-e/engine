@@ -27,6 +27,7 @@ namespace lv {
 
             void resume();
             bool isRunning();
+            word frame();
 
             void runScene(octet sceneID);
             

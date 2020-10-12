@@ -2,11 +2,17 @@
 #include "lv-engine/engine.h"
 #include <cstring>
 
-#define MIN(a,b) ((a)<(b)?(a):(b))
+#ifndef lvrMIN
+#define lvrMIN(a,b) ((a)<(b)?(a):(b))
+#endif
+
+#ifndef lvrMAX
+#define lvrMAX(a,b) ((a)>(b)?(a):(b))
+#endif
 
 using namespace lv;
 
-void Display::clear() {
+void Display::clear(const octet color) {
 #ifdef USE_OCTAPIXELS
     for(half h = 0; h < lvk_display_h; h++) { 
         for(half w = 0; w < lvk_octaspixels_per_line; w++) {
@@ -14,11 +20,24 @@ void Display::clear() {
         }
     }
 #else 
-    memset(&_framebuffer, 0, lvk_display_h * lvk_display_w);
+    memset(&_framebuffer, color, lvk_display_h * lvk_display_w);
 #endif
 }
 
+#if lvk_measuring_fps == true
+static octet fpsLog[lvk_display_h - 4] = {0};
+octet Display::fps() {
+    return lvDriver_CurrentFPS();
+}
+#endif
+
 void Display::refresh() {
+
+    #if lvk_measuring_fps == true
+    for(word y = 2; y < lvk_display_h - 4;  y++)
+        fillRect(Region(lvk_display_w - 10, y, 8, 1), fpsLog[y-2]);
+    #endif
+
     for(half i = 0; i < lvk_display_h; i++) {
         #ifdef USE_OCTAPIXELS
         lvDriver_DrawHLine(i, (lv::OctaPixel*) &_framebuffer[i]);
@@ -26,19 +45,32 @@ void Display::refresh() {
         lvDriver_DrawHLine(i, _framebuffer[i]);
         #endif
     }
+
+    #if lvk_measuring_fps == true
+    
+    const word frame = lvDirector.frame();
+    word fps = lvDriver_CurrentFPS();
+    if (lvk_60hz) fps /= 2;
+
+    fpsLog[frame%(lvk_display_h-4)] = fps < 25 ? 28 : fps - 12;
+    fpsLog[(frame+1)%(lvk_display_h-4)] = 21;
+    
+    #endif
 }
 
-octet Display::fps() {
-    return lvDriver_CurrentFPS();
+void Display::fillRect(const Region region, const octet color) {
+
+    if(region.size.w < 1 || region.size.h < 1) return;
+
+    const i32 sx   = lvrMAX(0, region.origin.x);
+    const i32 ex   = lvrMIN(lvk_display_w, region.origin.x + region.size.w) - sx;
+    const i32 sy   = lvrMAX(0, region.origin.y);
+    const i32 ey   = lvrMIN(lvk_display_h, region.origin.y + region.size.h);
+
+    for(register word y = sy; y < ey; y++) memset(&_framebuffer[y][sx], color, ex);
 }
 
-void Display::fillRect(Region region, octet color) {
-    for( int i = region.origin.x; i < region.origin.x + region.size.w; i++)
-        for( int j = region.origin.y; j < region.origin.y + region.size.h; j++)
-            setPixel(Point(i, j), color);
-}
-
-void Display::setPixel(Point p, octet color) {
+void Display::setPixel(const Point p, const octet color) {
 #ifdef USE_OCTAPIXELS
     switch(p.x%8) {
         case 0: _framebuffer[p.y%lvk_display_h][p.x/8].xa = color; return;
@@ -117,7 +149,38 @@ void Display::blit(Region region, const OctaPixel *const  pixels) {
     } while( ++cursor < octas);
 }
 #else 
-void Display::blit(Region region, const octet *const pixels) {
+
+void Display::blit(const Region region, const octet *const pixels) {
+    
+    // must have region and data to draw
+    if(region.size.w < 1 || region.size.h < 1) return;
+    if(pixels == 0) return;
+
+    const i32 sx   = region.origin.x;
+    const i32 ex   = region.origin.x + region.size.w;
+    const i32 sy   = region.origin.y;
+    const i32 ey   = region.origin.y + region.size.h;
+
+    // if x axis not even on screen, return
+    if(sx > lvk_display_w || ex < 0) return;
+    if(sy > lvk_display_h || ey < 0) return;
+
+    register word cursor = 0;
+    register word color = 0;
+    
+    for(register i32 y = sy; y < ey; y++) {
+        for(register i32 x = sx; x < ex; x++, cursor++) {
+            if( x >= lvk_display_w || x < 0) continue;
+            color = *(pixels + cursor);
+
+            if (!color) continue;
+            _framebuffer[y][x] = color;
+        }
+    }
+
+}
+
+void Display::transfer(const Region region, const octet *const pixels) {
 
     // must have region and data to draw
     if(region.size.w < 1 || region.size.h < 1) return;
@@ -133,28 +196,37 @@ void Display::blit(Region region, const octet *const pixels) {
     if(linePadding + lineWidth < 0) return;
 
     // do one memcpy per line
-    for(word line = 0; line < lines; line++) {
+    if (linePadding >= 0) {
 
-        const word targetLine = firstLine + line;
+        for(register word line = 0; line < lines; line++) {
 
-        // check out of bounds
-        if (targetLine > lvk_display_h) return;
-        if (targetLine < 0) continue;
+            // check out of bounds
+            const word targetLine = firstLine + line;
+            if (targetLine > lvk_display_h) return;
+            if (targetLine < 0) continue;
 
-        if (linePadding >= 0) {
             memcpy(
                 &_framebuffer[targetLine][linePadding],
                 pixels + line * lineWidth,
-                MIN(lineWidth, lvk_display_w - linePadding)
+                lvrMIN(lineWidth, lvk_display_w - linePadding)
             );
-        } else {
+        }
+
+    } else {
+
+        for(register word line = 0; line < lines; line++) {
+
+            // check out of bounds
+            const word targetLine = firstLine + line;
+            if (targetLine > lvk_display_h) return;
+            if (targetLine < 0) continue;
+
             memcpy(
                 &_framebuffer[targetLine][0],
                 pixels + (line * lineWidth) + (linePadding * -1),
-                MIN(lineWidth, lvk_display_w + linePadding)
+                lvrMIN(lineWidth, lvk_display_w + linePadding)
             );
         }
     }
-
 }
 #endif

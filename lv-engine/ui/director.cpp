@@ -36,3 +36,4 @@ void Director::pause() { _running = false; }
 bool Director::isPaused() { return _running == false || _currentScene == NO_SCENE; }
 void Director::resume() { _running = true; }
 bool Director::isRunning() { return _running && _currentScene != NO_SCENE; }
+word Director::frame() { return _frame; }

@@ -18,17 +18,19 @@ namespace lv {
                 return instance;
             }
 
-            void clear();
             void refresh();
             octet fps();
-            
-            void fillRect(Region region, octet color);
-            void setPixel(Point p, octet color);
+
+            void clear(const octet color = 0);            
+            void fillRect(const Region region, const octet color);
+            void setPixel(const Point p, const octet color);
 
         #ifdef USE_OCTAPIXELS
             void blit(Region region, const OctaPixel *const pixels);
         #else
-            void blit(Region region, const octet *const pixels);
+            // blit does alpha, transfer don't
+            void blit(const Region region, const octet *const pixels);
+            void transfer(const Region region, const octet *const pixels);
         #endif
 
         private:
