@@ -8,6 +8,8 @@
 #include "lv-engine/ui/display.h"
 #include "lv-engine/ui/colors.h"
 
+#include "lv-engine/io/gamepad.h"
+
 // ----- driver promises:
 
 extern "C" {
@@ -27,7 +29,9 @@ extern "C" {
     extern void lvDriver_DrawHLine(lv::half line, lv::octet (&stream)[lvk_display_w]);
     #endif
 
-    #if lvk_measuring_fps == true
+    #if lvk_gamepads == true
     extern lv::octet lvDriver_CurrentFPS(void);
     #endif
+
+    extern lv::GamePad lvDriver_GamePadState(lv::half player);
 }

@@ -24,7 +24,7 @@ void Display::clear(const octet color) {
 #endif
 }
 
-#if lvk_measuring_fps == true
+#if lvk_gamepads == true
 static octet fpsLog[lvk_display_h - 4] = {0};
 octet Display::fps() {
     return lvDriver_CurrentFPS();
@@ -33,7 +33,7 @@ octet Display::fps() {
 
 void Display::refresh() {
 
-    #if lvk_measuring_fps == true
+    #if lvk_gamepads == true
     for(word y = 2; y < lvk_display_h - 4;  y++)
         fillRect(Region(lvk_display_w - 10, y, 8, 1), fpsLog[y-2]);
     #endif
@@ -46,7 +46,7 @@ void Display::refresh() {
         #endif
     }
 
-    #if lvk_measuring_fps == true
+    #if lvk_gamepads == true
     
     const word frame = lvDirector.frame();
     word fps = lvDriver_CurrentFPS();

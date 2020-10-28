@@ -1,6 +1,8 @@
 #include "lv-engine/ui/director.h"
 #include "lv-engine/ui/display.h"
 #include "lv-engine/ui/scene.h"
+#include "lv-engine/io/gamepad.h"
+#include "lv-engine/engine.h"
 
 using namespace lv;
 
@@ -12,6 +14,11 @@ Director::Director() {
 
 void Director::update(){
     if (isRunning()) {
+
+        for (word playerID = 0; playerID < lvk_gamepads; playerID++) {
+            lvGamepads.update(playerID, lvDriver_GamePadState(playerID));
+        }
+
         _frame++;
         (scenesTable[_currentScene].onFrame)();
     }
