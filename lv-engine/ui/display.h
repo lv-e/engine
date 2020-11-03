@@ -30,6 +30,7 @@ namespace lv {
         #else
             // blit does alpha, transfer don't
             void blit(const Region region, const octet *const pixels);
+            void blit(const Region src, const Point dst, const octet *const pixels, const Size bufferSize);
             void transfer(const Region region, const octet *const pixels);
         #endif
 

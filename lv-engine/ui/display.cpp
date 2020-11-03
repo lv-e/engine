@@ -10,6 +10,10 @@
 #define lvrMAX(a,b) ((a)>(b)?(a):(b))
 #endif
 
+#ifndef lvrCLAMP
+#define lvrCLAMP(value,min,max) ((value)<(min)?(min):((value)>(max)?(max):(value)))
+#endif
+
 using namespace lv;
 
 void Display::clear(const octet color) {
@@ -24,7 +28,7 @@ void Display::clear(const octet color) {
 #endif
 }
 
-#if lvk_gamepads == true
+#if lvk_measuring == true
 static octet fpsLog[lvk_display_h - 4] = {0};
 octet Display::fps() {
     return lvDriver_CurrentFPS();
@@ -33,7 +37,7 @@ octet Display::fps() {
 
 void Display::refresh() {
 
-    #if lvk_gamepads == true
+    #if lvk_measuring == true
     for(word y = 2; y < lvk_display_h - 4;  y++)
         fillRect(Region(lvk_display_w - 10, y, 8, 1), fpsLog[y-2]);
     #endif
@@ -46,7 +50,7 @@ void Display::refresh() {
         #endif
     }
 
-    #if lvk_gamepads == true
+    #if lvk_measuring == true
     
     const word frame = lvDirector.frame();
     word fps = lvDriver_CurrentFPS();
@@ -150,34 +154,53 @@ void Display::blit(Region region, const OctaPixel *const  pixels) {
 }
 #else 
 
-void Display::blit(const Region region, const octet *const pixels) {
+void Display::blit(const Region src, const Point dst, const octet *const pixels, const Size bufferSize){
+
+    /*
     
-    // must have region and data to draw
-    if(region.size.w < 1 || region.size.h < 1) return;
+    xxxxxxxx     -------
+    xxxoooxx     -------
+    xxxoooxx     -ooo---
+    xxxxxxxx     -ooo---- 
+    
+    size = 8,8
+    src = 3,1, 3,2
+    dst = 1,2
+
+    */
+
+    // must have a valid region, position and data to draw
+    if(src.size.w < 1 || src.size.h < 1) return;
+    if(dst.x > lvk_display_w || dst.y > lvk_display_h) return;
+    if(dst.x + src.size.w < 0 || dst.y + src.size.h < 0) return;
     if(pixels == 0) return;
 
-    const i32 sx   = region.origin.x;
-    const i32 ex   = region.origin.x + region.size.w;
-    const i32 sy   = region.origin.y;
-    const i32 ey   = region.origin.y + region.size.h;
-
-    // if x axis not even on screen, return
-    if(sx > lvk_display_w || ex < 0) return;
-    if(sy > lvk_display_h || ey < 0) return;
-
-    register word cursor = 0;
+    const word reads = src.size.w;
+    const word jumps = bufferSize.w - reads;
+    register word cursor = (src.origin.y * bufferSize.w) + src.origin.x;
     register word color = 0;
+    const i32 yEnd = lvrMIN(dst.y + src.size.h, lvk_display_h);
+    const i32 xEnd = dst.x + reads;
     
-    for(register i32 y = sy; y < ey; y++) {
-        for(register i32 x = sx; x < ex; x++, cursor++) {
-            if( x >= lvk_display_w || x < 0) continue;
-            color = *(pixels + cursor);
-
+    for(register int ly = dst.y; ly < yEnd; ly++){
+        for(register int lx = dst.x; lx < xEnd; lx++, cursor++){
+            if (lx >= lvk_display_w || lx < 0) continue;
+            color = *(pixels + (cursor - 1));
             if (!color) continue;
-            _framebuffer[y][x] = color;
+            _framebuffer[ly][lx] = color;
         }
+
+        cursor += jumps;
     }
 
+}
+
+void Display::blit(const Region region, const octet *const pixels) {
+    blit(  
+        Region(0,0,region.size.w, region.size.h),
+        Point(region.origin.x,region.origin.y),
+        pixels, region.size
+    );
 }
 
 void Display::transfer(const Region region, const octet *const pixels) {
