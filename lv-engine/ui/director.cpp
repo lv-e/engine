@@ -32,9 +32,17 @@ void Director::draw(){
 }
 
 void Director::runScene(octet sceneID){
-    _currentScene = sceneID; _frame = 0;
-    (scenesTable[_currentScene].onAwake)();
-    (scenesTable[_currentScene].onEnter)();
+    
+    _running = false; 
+    octet last_scene = _currentScene;
+    _currentScene = NO_SCENE;
+
+    if(last_scene != NO_SCENE) (scenesTable[last_scene].onExit)();
+    if(sceneID != NO_SCENE) (scenesTable[sceneID].onAwake)();
+    if(sceneID != NO_SCENE) (scenesTable[sceneID].onEnter)();
+
+    _frame = 0;
+    _currentScene = sceneID;
     _running = true;
 }
 

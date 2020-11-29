@@ -8,7 +8,6 @@ namespace lv {
 
     typedef unsigned int ButtonState;
     typedef struct GamePad{
-
         ButtonState up, down, left, rigth;
         ButtonState x, y, a, b;
         ButtonState l, r;

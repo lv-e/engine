@@ -2,6 +2,8 @@
 #pragma once
 
 #include "lv-game/lvk.h"
+#include "lv-game/shared.h"
+
 #include "lv-engine/lvtypes.h"
 #include "lv-engine/ui/scene.h"
 
