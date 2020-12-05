@@ -53,10 +53,14 @@ void Display::refresh() {
     #if lvk_measuring == true
     
     const word frame = lvDirector.frame();
-    word fps = lvDriver_CurrentFPS();
+    octet fps = lvDriver_CurrentFPS();
+
     if (lvk_60hz) fps /= 2;
 
-    fpsLog[frame%(lvk_display_h-4)] = fps < 25 ? 28 : fps - 12;
+    if (fps <= 29) fpsLog[frame%(lvk_display_h-4)] = 28; // red
+    else if (fps == 30) fpsLog[frame%(lvk_display_h-4)] = 17; // blue
+    else fpsLog[frame%(lvk_display_h-4)] = 18; // light blue
+    
     fpsLog[(frame+1)%(lvk_display_h-4)] = 21;
     
     #endif
