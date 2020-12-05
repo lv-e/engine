@@ -14,24 +14,23 @@
 
 extern "C" {
 
-    #ifdef USE_OCTAPIXELS
-    /* 
-        will be called every horizontal line of frame buffer on draw
-        size of stream = lvk_octaspixels_per_line
-    */
-    extern void lvDriver_DrawHLine(lv::half line, lv::OctaPixel* stream);
-    #else 
-
     /* 
         will be called every horizontal line of framebuffer on draw
         size of stream = lvk_screen_w
     */
-    extern void lvDriver_DrawHLine(lv::half line, lv::octet (&stream)[lvk_display_w]);
-    #endif
+    extern void lvDriver_DrawHLine(const lv::half line, const lv::octet (&stream)[lvk_display_w]);
 
-    #if lvk_gamepads == true
+    /* 
+        will be called every frame on update
+        num. of player = lvk_gamepads
+    */
+    extern lv::GamePad lvDriver_GamePadState(lv::half player);
+
+    /* 
+        when lvk_measuring == true
+        will call every frame and then draw the fps side bar
+    */
+    #if lvk_measuring == true
     extern lv::octet lvDriver_CurrentFPS(void);
     #endif
-
-    extern lv::GamePad lvDriver_GamePadState(lv::half player);
 }
